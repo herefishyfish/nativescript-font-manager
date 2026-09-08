@@ -10,7 +10,8 @@ let package = Package(
     name: "FontManager",
     platforms: [
         .iOS(.v13),
-        .visionOS(.v1)
+        .visionOS(.v1),
+        .tvOS(.v13)
     ],
     products: [
         .library(
