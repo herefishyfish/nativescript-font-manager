@@ -15,6 +15,17 @@
 #endif
 @end
 
+#if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST || TARGET_OS_VISION
+static inline CGFloat NSCDefaultLabelFontSize(void) {
+#if TARGET_OS_TV
+    // tvOS POC: UIFont.labelFontSize is unavailable on tvOS; 17pt matches the iOS default.
+    return 17.0;
+#else
+    return UIFont.labelFontSize;
+#endif
+}
+#endif
+
 @implementation NSCFontFace
 
 static dispatch_queue_t NSCFontFaceQueue(void) {
@@ -314,7 +325,7 @@ static dispatch_queue_t NSCFontFaceQueue(void) {
         if (font) {
             self.font = font;
 #if TARGET_OS_IOS || TARGET_OS_TV || TARGET_OS_MACCATALYST || TARGET_OS_VISION
-            self.uiFont = [self _uiFontFromCGFont:font size:UIFont.labelFontSize];
+            self.uiFont = [self _uiFontFromCGFont:font size:NSCDefaultLabelFontSize()];
 #endif
             self.status = NSCFontFaceStatusLoaded;
             callback(nil);
@@ -348,10 +359,10 @@ static dispatch_queue_t NSCFontFaceQueue(void) {
                        // Custom source font: bridge via PostScript name.
                        // System/generic font (no src): re-create from resolved family name.
                        if (src.length > 0) {
-                           self.uiFont = [self _uiFontFromCGFont:font size:UIFont.labelFontSize];
+                           self.uiFont = [self _uiFontFromCGFont:font size:NSCDefaultLabelFontSize()];
                        } else {
                            NSString *resolvedFamily = [[NSCFontResolver shared] resolveGenericFamily:family];
-                           self.uiFont = [self _uiFontFromFamily:resolvedFamily size:UIFont.labelFontSize];
+                           self.uiFont = [self _uiFontFromFamily:resolvedFamily size:NSCDefaultLabelFontSize()];
                        }
 #endif
                        self.status = NSCFontFaceStatusLoaded;

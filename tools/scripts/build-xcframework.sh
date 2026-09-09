@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Usage: tools/scripts/build-xcframework.sh [output-dir]
+# Usage: tools/scripts/build-xcframework.sh [output-dir] [platform ...]
 #
 # SPM packages archive to a relocatable object file, not a framework, so
 # each slice is linked into a static library and packaged with the public
@@ -13,7 +13,11 @@ SCHEME="FontManager"
 OUT_DIR="${1:-$REPO_ROOT/dist/spm}"
 WORK_DIR="$OUT_DIR/build"
 
-PLATFORMS=("iOS" "iOS Simulator" "visionOS" "visionOS Simulator")
+PLATFORMS=("iOS" "iOS Simulator" "visionOS" "visionOS Simulator" "tvOS" "tvOS Simulator")
+if [ "$#" -gt 1 ]; then
+  shift
+  PLATFORMS=("$@")
+fi
 
 rm -rf "$OUT_DIR"
 mkdir -p "$WORK_DIR"
